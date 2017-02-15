@@ -36,15 +36,18 @@ namespace Gaia
         StreamWriter w;
         bool desenhar;
 
+        public static int escala;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             graphics.PreferMultiSampling = false;
-            graphics.PreferredBackBufferWidth = 400;
-            graphics.PreferredBackBufferHeight = 200;
-            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1366;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.IsFullScreen = true;
             graphics.SynchronizeWithVerticalRetrace = false;           
             Content.RootDirectory = "Content";
+            escala = 3;
         }
 
         /// <summary>
@@ -92,17 +95,17 @@ namespace Gaia
                     pixel, 
                     GraphicsDevice.Viewport.Width, 
                     GraphicsDevice.Viewport.Height,
-                    random.Next(0, (GraphicsDevice.Viewport.Width - 1)), 
-                    random.Next(0, (GraphicsDevice.Viewport.Height - 1)), 
+                    random.Next(0, (GraphicsDevice.Viewport.Width / escala - 1)),
+                    random.Next(0, (GraphicsDevice.Viewport.Height / escala - 1)), 
                     0,          //generation
                     2000,       //maxIdade
                     400,        //maxFome
-                    500,        //maxContadorReproducoes
-                    5,          //maxContadorDirecao
-                    0.5f,       //comidaConsumida
+                    random.Next(200, 500),        //maxContadorReproducoes
+                    2,          //maxContadorDirecao
+                    0.7f,       //comidaConsumida
                     0.3f,       //taxaFome
                     null,       //Pai
-                    50          //maxFomeConfortavel
+                    100         //maxFomeConfortavel
                     ));
             }
 
@@ -148,7 +151,7 @@ namespace Gaia
                     contadorMortes++;
                 }
                 //Reproduzir as que estão prontas
-                if (entidade.Fome < entidade.MaxFome / 4 && 
+                if (entidade.Fome < entidade.MaxFomeConfortavel / 2 && 
                     entidade.Idade > entidade.MaxIdade / 6 && 
                     //entidade.Idade < entidade.MaxIdade - (entidade.MaxIdade / 6) && 
                     entidade.ContadorReproducao > entidade.MaxContadorReproducoes)
@@ -161,8 +164,8 @@ namespace Gaia
                         (int)entidade.Pos.X, 
                         (int)entidade.Pos.Y,
                         entidade.Generation + 1,
-                        random.Next(entidade.MaxIdade - 20, entidade.MaxIdade + 21),
-                        random.Next(entidade.MaxFome - 5, entidade.MaxFome + 6),
+                        random.Next(entidade.MaxIdade - 1, entidade.MaxIdade + 1),
+                        random.Next(entidade.MaxFome - 1, entidade.MaxFome + 1),
                         entidade.MaxContadorReproducoes,
                         entidade.MaxContadorDirecao,
                         entidade.ComidaConsumida,
@@ -204,7 +207,11 @@ namespace Gaia
             }
             entidadesMortas.Clear();
 
-            terreno.Update(gameTime);
+            if (entidades.Count > 0)
+            {
+                terreno.Update(gameTime);
+            }
+            
 
             base.Update(gameTime);
         }
@@ -246,7 +253,7 @@ namespace Gaia
             stringBuilder.Append("Generations: ");
             stringBuilder.Append(RandomColorGenerator.NumGenerations());
             
-            spriteBatch.DrawString(arial12, stringBuilder, Vector2.Zero, Color.Red);
+            spriteBatch.DrawString(arial12, stringBuilder, Vector2.Zero, Color.Blue);
 
             spriteBatch.End();
 

@@ -167,8 +167,8 @@ namespace Gaia.Entities
             this.maxFome = maxFome;
             pos = new Vector2(posX, posY);
             this.pixel = pixel;
-            this.width = width;
-            this.height = height;
+            this.width = width / Game1.escala;
+            this.height = height / Game1.escala;
             vivo = true;
             idade = 0;
             contadorReproducao = 0;
@@ -200,6 +200,7 @@ namespace Gaia.Entities
             //    this.comidaConsumida = comidaConsumida + 0.01f;
             //}
 
+            /*
             if (maxFomeConfortavel > 2f)
             {
                 num = random.Next(0, 2);
@@ -224,6 +225,7 @@ namespace Gaia.Entities
                     this.maxFomeConfortavel = maxFomeConfortavel + 1;
                 }
             }
+            */
 
             if (maxContadorReproducoes > 2f)
             {
@@ -306,13 +308,18 @@ namespace Gaia.Entities
         {
 
 
-            if (fome > maxFomeConfortavel)
+            if (fome > taxaFome)
             {
                 //tem fome, comer
-                if (terreno.comida[(int)pos.X, (int)pos.Y] > comidaConsumida)
+                if (terreno.comida[(int)pos.X, (int)pos.Y] >= comidaConsumida)
                 {
                     fome -= comidaConsumida;
                     terreno.comida[(int)pos.X, (int)pos.Y] -= comidaConsumida;
+                }
+                else if (terreno.comida[(int)pos.X, (int)pos.Y] >= taxaFome)
+                {
+                    fome -= terreno.comida[(int)pos.X, (int)pos.Y];
+                    terreno.comida[(int)pos.X, (int)pos.Y] = 0;
                 }
                 else
                 {
@@ -327,7 +334,8 @@ namespace Gaia.Entities
             {
                 Andar(random);
             }
-
+            
+            
             idade++;
             contadorReproducao++;
             
@@ -349,19 +357,16 @@ namespace Gaia.Entities
             if (this.idade > maxIdade / 4)
             {
                 entityTemp = entidades.Find(x => x.Pos.X == this.pos.X &&
-                x.Pos.Y == this.pos.Y);
+                x.Pos.Y == this.pos.Y && x != this);
 
                 if (entityTemp != null)
                 {
 
                     if (entidades.Find(x => x == entityTemp &&
-                    x != this &&
-                    x.Idade > x.maxIdade / 5 &&
+                    x.Idade > x.maxIdade / 4 &&
                     x.Vivo &&
-                    x.Pai != this.pai &&
                     x != this.pai &&
-                    x.Pai != this &&
-                    x.numFilhos > this.numFilhos) != null)
+                    x.Pai != this) != null)
                     {
                         vivo = false;
                         this.causaMorte = "Violencia";
@@ -489,7 +494,8 @@ namespace Gaia.Entities
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(this.pixel, pos, cor);
+            //spriteBatch.Draw(this.pixel, pos, cor);
+            spriteBatch.Draw(this.pixel, new Vector2(pos.X * Game1.escala, pos.Y * Game1.escala), null, cor, 0f, Vector2.Zero, Game1.escala, SpriteEffects.None, 0f);
             //spriteBatch.Draw(this.pixel, pos, (cor * ((255f - ((fome * 255 / this.maxFome)) ) / 255f)));
             //spriteBatch.Draw(this.pixel, pos, (cor * ((255f - ((fome * 255 / this.maxFome))) / 255f)));
         }

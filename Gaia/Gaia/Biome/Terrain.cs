@@ -17,7 +17,7 @@ namespace Gaia.Biome
 
         public Terreno(int width, int heigth, Texture2D pixel, Random random)
         {
-            comida = new float[width, heigth];
+            comida = new float[width / Game1.escala, heigth / Game1.escala];
             this.pixel = pixel;
             this.random = random;
 
@@ -25,7 +25,7 @@ namespace Gaia.Biome
             {
                 for (int j = 0; j < comida.GetLength(1); j++)
                 {
-                    comida[i, j] = (random.Next(0, 500) / 255f);
+                    comida[i, j] = (random.Next(0, 250) / 255f);
                 }
             }
         }
@@ -36,23 +36,24 @@ namespace Gaia.Biome
             {
                 for (int j = 0; j < comida.GetLength(1); j++)
                 {
-                    comida[i, j] += ((float)random.NextDouble() / random.Next(5, 10)) / 255f;
-                    if (comida[i, j] >= 6)
-                    {
-                        comida[i, j] = 0.3f;
-                    }
+                    comida[i, j] += (random.Next(1, 5) / 255f) / 40f;
+                    //if (comida[i, j] >= 6)
+                    //{
+                    //    comida[i, j] = 0.3f;
+                    //}
                 }
             }
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for(int i = 0; i < comida.GetLength(0); i++){
-                for (int j = 0; j < comida.GetLength(1); j++)
+            for (int i = 0; i < comida.GetLength(0) * Game1.escala; i+= Game1.escala)
+            {
+                for (int j = 0; j < comida.GetLength(1) * Game1.escala; j += Game1.escala)
                 {
                     pos.X = i;
                     pos.Y = j;
-                    spriteBatch.Draw(this.pixel, pos, (Color.YellowGreen * comida[i, j]));
+                    spriteBatch.Draw(this.pixel, pos, null, (Color.YellowGreen * comida[i / Game1.escala, j / Game1.escala]), 0f, Vector2.Zero, Game1.escala, SpriteEffects.None, 0f);
                 }
             }
         }
